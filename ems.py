@@ -1,10 +1,12 @@
+import sys
+import itertools
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation as animation
 from scipy.spatial import distance
 
 class Field:
-    def __init__(self, dim=2):
+    def __init__(self, dim=2, size=5):
         self.dim = dim
         self.m = []
         self.friction = []
@@ -15,6 +17,7 @@ class Field:
         self.pos = np.empty((0, dim), dtype='d')
         self.fig, self.ax = plt.subplots(figsize=(6, 6), dpi=80)
         self.ehistory = [100] * 5
+        self.ax.axis([-size, size, -size, size])
 
     def addSpring(self, n1, n2, k, l):
         self.forces[n1].append(self.getSpringForceGenerator(n1, n2, k, l))
@@ -31,6 +34,7 @@ class Field:
         self.vel += dt * np.array(self.acc)
         self.vel -= np.c_[np.array(self.friction) / self.m] * self.vel
         self.pos += dt * np.array(self.vel)
+        #self.dump(0)
 
     def updateEnergy(self):
         earray = np.array([sum(np.array(v) * v) for v in self.vel]) * self.m
@@ -51,9 +55,7 @@ class Field:
         x = data.pos[:,0]
         y = data.pos[:,1]
         self.scat = self.ax.scatter(x, y,
-            s=50, c=self.colors, marker='o', edgecolors=self.colors)
-        l = 5
-        self.ax.axis([-l, l, -l, l])
+                                    s=50, c=self.colors, marker='o', edgecolors='k')
         return self.scat,
 
     def updateFrame(self, i):
@@ -76,7 +78,18 @@ class Field:
         self.acc = np.vstack([self.acc, np.zeros(self.dim)])
         self.vel = np.vstack([self.vel, np.zeros(self.dim)])
         self.pos = np.vstack([self.pos, pos])
-        
+
+    def bulkInit(self, pos, friction=1, m=1, color='b'):
+        n = pos.shape[0]
+        self.dim = pos.shape[1]
+        self.m = np.tile(m, n)
+        self.friction = np.tile(friction, n)
+        self.forces = [[lambda : np.array(np.zeros(self.dim))] for i in xrange(0, n)]
+        self.colors = np.tile(color, n)
+        self.acc = np.zeros(pos.shape)
+        self.vel = np.zeros(pos.shape)
+        self.pos = pos
+
     def start(self):
         self.anime = animation.FuncAnimation(self.fig,
                                              self.updateFrame,
@@ -90,22 +103,33 @@ class Field:
                         extra_args=['-vcodec', 'libx264'])
 
 def Main():
-    field = Field(dim=2)
-    field.add([4, -2], friction=.04, color='b')
-    field.add([-3, 3], friction=.04, color='r')
-    field.add([-3, -3], friction=.04, color='#ff00ff')
-    field.addSpring(0, 1, k=2, l=4)
-    field.addSpring(1, 2, k=2, l=4)
-    field.addSpring(2, 0, k=2, l=4)
+    fieldSize = 5
+    field = Field(dim=2, size=fieldSize)
+
+    nodes = 8
+    field.bulkInit((np.random.rand(nodes, 2) * 2 - 1) * fieldSize,
+                   friction=.04)
+    field.colors = ['#000000',
+                    '#ff0000',
+                    '#0000ff',
+                    '#ff00ff',                    
+                    '#00ff00',
+                    '#00ffff',
+                    '#ffff00',
+                    '#ffffff']
+    for pair in itertools.combinations(np.arange(0, nodes), 2):
+        field.addSpring(pair[0], pair[1], k=2, l=4)
+
     field.start()
 
-    try:
-        field.save('ems.mp4')
-    except StopIteration:
-        pass
-
-    print 'Done!'
-    #plt.show()
+    if len(sys.argv)>1:
+        try:
+            field.save(sys.argv[1])
+        except StopIteration:
+            pass
+        print 'Done!'
+    else:
+        plt.show()
 
 if __name__ == '__main__':
     Main()
