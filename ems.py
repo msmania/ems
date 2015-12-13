@@ -15,6 +15,7 @@ class Field:
         self.vel = np.empty((0, dim), dtype='d')
         self.pos = np.empty((0, dim), dtype='d')
         self.fig, self.ax = plt.subplots(figsize=(6, 6), dpi=80)
+        self.epos = 0
         self.ehistory = [100] * 5
         self.ax.axis([-size, size, -size, size])
 
@@ -36,16 +37,17 @@ class Field:
 
     def updateEnergy(self):
         earray = [m[0] * sum(np.array(v) * v) for (v,m) in zip(self.vel, self.m)]
-        self.ehistory.append(sum(earray))
-        self.ehistory.pop(0)
+        self.ehistory[self.epos] = sum(earray)
+        self.epos = (self.epos + 1) % len(self.ehistory)
         e = np.mean(self.ehistory)
         return e
 
     def frameGen(self):
         dt = .1
         while self.updateEnergy() >= self.limit:
-            self.move(dt)
-            yield self
+            for i in range(0, 10):
+                self.move(dt)
+                yield self
         print 'time = %.3f sec' % (time.time() - self.startTime)
 
     def initFrame(self):

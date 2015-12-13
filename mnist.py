@@ -46,7 +46,7 @@ def Main():
                                images[pair[1]].astype('d'))
         d /= 350
         field.addSpring(pair[0], pair[1], k=.5, l=d)
-    field.start()
+    field.start(limit=.1)
 
     if len(sys.argv)>1:
         field.save(sys.argv[1])
