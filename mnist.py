@@ -37,9 +37,8 @@ def Main():
     nodes = int(os.environ['N']) if 'N' in os.environ else 10
     fieldSize = 10
     images,labels = readMNIST(0)
-    field = ems.Field(dim=2, size=fieldSize)
-    field.bulkInit((np.random.rand(nodes, 2) * 2 - 1) * fieldSize,
-                   friction=.04)
+    field = ems.Field(dim=2, size=fieldSize, nodes=nodes)
+    field.bulkInit(friction=.04)
     field.colors = [colorMap[l] for l in labels]
     for pair in itertools.combinations(np.arange(0, nodes), 2):
         d = distance.euclidean(images[pair[0]].astype('d'),
