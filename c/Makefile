@@ -13,7 +13,7 @@ LFLAGS=
 # https://gcc.gnu.org/projects/tree-ssa/vectorization.html
 VFLAGS=-ftree-vectorize -ftree-vectorizer-verbose=1 -mavx
 
-INCLUDES=-I/usr/local/python/current/include/python2.7 -I/usr/local/boost/current/include
+INCLUDES=-I/usr/local/python/current/include/python2.7 -I/usr/local/boost/current/include -I/usr/include/python2.7
 LIBDIRS=-L/usr/local/python/current/lib -L/usr/local/boost/current/lib
 LIBS=-lpython2.7 -lboost_python
 
