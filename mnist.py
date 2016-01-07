@@ -44,6 +44,10 @@ def Main():
         d = distance.euclidean(images[pair[0]].astype('d'),
                                images[pair[1]].astype('d'))
         d /= 350
+        # N=200 --> k=.5
+        # N=1000 --> k=.01 ~ .1
+        # N=5000 --> k=.005 ~ .01
+        # N=10000 --> k=.002 ~ .005
         field.addSpring(pair[0], pair[1], k=.5, l=d)
     field.start(limit=.1)
 

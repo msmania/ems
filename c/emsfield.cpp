@@ -59,8 +59,21 @@ void Field::BulkInit(int seed, double m, double friction, int fieldSize) {
     _velocity = .0;
     _accel = .0;
     generator.seed(seed);
-    for (int i = 0 ; i < (int)_position.size() ; ++i) {
-        _position[i] = (distribution(generator) * 2 - 1) * fieldSize;
+
+    if (_dim==2) {
+        // polar coordinates
+        int n = _m.size();
+        for (int i = 0 ; i < n ; ++i) {
+            double d = distribution(generator) * fieldSize;
+            double a = distribution(generator) * M_PI * 2;
+            _position[i + 0] = d * cos(a);
+            _position[i + n] = d * sin(a);
+        }
+    }
+    else {
+        for (int i = 0 ; i < (int)_position.size() ; ++i) {
+            _position[i] = (distribution(generator) * 2 - 1) * fieldSize;
+        }
     }
 }
 
