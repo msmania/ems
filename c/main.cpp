@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <valarray>
 #include <vector>
+#include <queue>
+#include <pthread.h>
+#include "workq.h"
 #include "emsfield.h"
 
 int main(int argc, char *argv[]) {

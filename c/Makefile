@@ -15,7 +15,7 @@ VFLAGS=-ftree-vectorize -ftree-vectorizer-verbose=1 -mavx
 
 INCLUDES=-I/usr/local/python/current/include/python2.7 -I/usr/local/boost/current/include
 LIBDIRS=-L/usr/local/python/current/lib -L/usr/local/boost/current/lib
-LIBS=-lpython2.7 -lboost_python
+LIBS=-lpython2.7 -lboost_python -lpthread
 
 all: clean $(TARGET) ems.so
 
@@ -25,7 +25,7 @@ clean:
 $(TARGET): $(OBJS)
 	$(CC) $(LFLAGS) $(LIBDIRS) $^ -o $@ $(LIBS)
 
-ems.so: emsfield.o shared.o
+ems.so: workq.o emsfield.o shared.o
 	$(CC) -shared $(LFLAGS) $(LIBDIRS) $^ -o $@ $(LIBS)
 
 $(OBJS): $(SRCS)

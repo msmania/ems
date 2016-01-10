@@ -49,6 +49,7 @@ def Main():
         # N=5000 --> k=.005 ~ .01
         # N=10000 --> k=.002 ~ .005
         field.addSpring(pair[0], pair[1], k=.5, l=d)
+    print 'starting..'
     field.start(limit=.1)
 
     if len(sys.argv)>1:

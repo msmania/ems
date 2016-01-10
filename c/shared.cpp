@@ -1,6 +1,9 @@
 #include <boost/python.hpp>
 #include <valarray>
 #include <vector>
+#include <queue>
+#include <pthread.h>
+#include "workq.h"
 #include "emsfield.h"
 
 static double DArrayGetAt(const darray &arr, size_t n) {
