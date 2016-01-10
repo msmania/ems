@@ -1,4 +1,5 @@
 import numpy as np
+import premain
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import time
@@ -49,7 +50,7 @@ class Field:
         pos = np.array(data.Positions())
         n = self.nodes
         self.scat = self.ax.scatter(pos[0*n:1*n], pos[1*n:2*n],
-                                    s=50, c=self.colors, marker='o', edgecolors='k')
+                                    s=20, c=self.colors, marker='o', edgecolors='k', linewidth=.5)
         return self.scat,
 
     def updateFrame(self, i):
@@ -62,11 +63,12 @@ class Field:
 
     def start(self, limit=.1):
         self.limit = limit
+        # interval (msec) * save_count = max duration
         self.anime = animation.FuncAnimation(self.fig,
                                              self.updateFrame,
                                              init_func=self.initFrame,
                                              interval=50,
-                                             save_count=10000)
+                                             save_count=6000) # max = 5min.
 
     def save(self, filename):
         try:
